@@ -15,12 +15,12 @@ source scripts/activate
  ## Шаг 2 - клонирование репозитория 4-ой лабы  
  ```
  Скопируем репозиторий 4-ой лабы и настроим удалённый репозиторий, используя нижепредставленные команды:  
-# Клонировать lab04 как основу для lab05  
-git clone https://github.com/${GITHUB_USERNAME}/lab04 projects/lab05  
-cd projects/lab05  
+# Клонировать lab04 как основу для lab06  
+git clone https://github.com/${GITHUB_USERNAME}/lab04 projects/lab06  
+cd projects/lab06  
 # Изменить remote на новый репозиторий  
 git remote remove origin  
-git remote add origin https://github.com/${GITHUB_USERNAME}/lab05  
+git remote add origin https://github.com/${GITHUB_USERNAME}/lab06  
 ```
 
 ## Шаг 3 - добавим Google Test как подмодуль  
@@ -35,7 +35,7 @@ git submodule add https://github.com third-party/gtest
 ```  
   *Вывод*:
 ```
-Клонирование в «/home/igor/Brandon-Triks/workspace/projects/lab05/third-party/gtest»...  
+Клонирование в «/home/igor/Brandon-Triks/workspace/projects/lab06/third-party/gtest»...  
 remote: Enumerating objects: 28627, done.  
 remote: Counting objects: 100% (61/61), done.  
 remote: Compressing objects: 100% (46/46), done.  
