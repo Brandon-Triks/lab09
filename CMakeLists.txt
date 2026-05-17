@@ -53,3 +53,18 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized")
     add_test(NAME check COMMAND check)
 endif()
 include(CPackConfig.cmake)
+# Указываем, что файл solver должен быть установлен в папку bin
+install(TARGETS solver DESTINATION bin)
+
+# Настройки CPack
+set(CPACK_PACKAGE_NAME "solver")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_CONTACT "your-email@example.com")
+
+# Настройки для Debian/Ubuntu (.deb)
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Your Name")
+
+# Настройки для Windows (.msi)
+set(CPACK_WIX_UPGRADE_GUID "E8A6820D-47C2-4309-8B77-8335D2E12345") # Любой валидный GUID
+
+include(CPack)
