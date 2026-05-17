@@ -2,8 +2,9 @@ name: Build and Release
 
 on:
   push:
+    branches: [ main ] # Чтобы проверять сборку при каждом пуше
     tags:
-      - 'v*' # Запуск только при создании тегов, начинающихся с 'v'
+      - 'v*'      # Чтобы создавать релиз при пуше тега
 
 jobs:
   build:
@@ -20,24 +21,26 @@ jobs:
             generator: "WIX"
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y rpm
 
       - name: Configure CMake
-        run: cmake . -B build -DCMAKE_BUILD_TYPE=Release
+        # Используем -B build для чистоты
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release 
 
-      - name: Build project
+      - name: Build
         run: cmake --build build --config Release
 
-      - name: Package with CPack
+      - name: Package
         working-directory: build
         run: cpack -G "${{ matrix.generator }}"
 
-      - name: Upload Release Assets
+      - name: Upload Release
+        # Это сработает ТОЛЬКО если мы пушнули тег
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: |

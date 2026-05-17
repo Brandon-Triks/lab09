@@ -59,10 +59,10 @@ install(TARGETS solver DESTINATION bin)
 # Настройки CPack
 set(CPACK_PACKAGE_NAME "solver")
 set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_CONTACT "your-email@example.com")
+set(CPACK_PACKAGE_CONTACT "p0strelov@yandex.ru")
 
 # Настройки для Debian/Ubuntu (.deb)
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Your Name")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Brandon-Triks")
 
 # Настройки для Windows (.msi)
 set(CPACK_WIX_UPGRADE_GUID "E8A6820D-47C2-4309-8B77-8335D2E12345") # Любой валидный GUID
