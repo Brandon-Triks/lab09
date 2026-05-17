@@ -37,7 +37,8 @@ jobs:
 
       - name: Package
         working-directory: build
-        run: cpack -G "${{ matrix.generator }}"
+        # Добавляем -C Release специально для Windows
+        run: cpack -G "${{ matrix.generator }}" -C Release
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
