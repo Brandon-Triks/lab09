@@ -69,4 +69,6 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Brandon-Triks")
 # Для Windows (обязательно для WIX)
 set(CPACK_WIX_UPGRADE_GUID "E8A6820D-47C2-4309-8B77-8335D2E12345")
 
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt") # Добавь эту строку
+
 include(CPack)
