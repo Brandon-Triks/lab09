@@ -1,20 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 
+# 1. Указываем имя проекта SOLVER (это важно для имен пакетов)
+project(solver VERSION 1.0.0)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(BUILD_EXAMPLES "Build examples" OFF)
 option(BUILD_TESTS "Build tests" OFF)
 
-project(print)
-set(PRINT_VERSION_MAJOR 0)
-set(PRINT_VERSION_MINOR 1)
-set(PRINT_VERSION_PATCH 0)
-set(PRINT_VERSION_TWEAK 0)
-set(PRINT_VERSION
-${PRINT_VERSION_MAJOR}.${PRINT_VERSION_MINOR}.${PRINT_VERSION_PATCH}.${PRINT_VERSION_TWEAK})
-set(PRINT_VERSION_STRING "v${PRINT_VERSION}")
-
+# 2. Описание библиотеки print
 add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
 
 target_include_directories(print PUBLIC
@@ -22,53 +17,57 @@ target_include_directories(print PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
+# 3. Описание исполняемого файла solver
+# Он должен быть объявлен ДО команд install и CPack
+add_executable(solver ${CMAKE_CURRENT_SOURCE_DIR}/sources/solver.cpp)
+target_link_libraries(solver print)
+
+# 4. Правила установки (куда попадут файлы при упаковке)
+install(TARGETS solver RUNTIME DESTINATION bin)
+install(TARGETS print
+    EXPORT print-config
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+
+# 5. Примеры (если включены)
 if(BUILD_EXAMPLES)
   file(GLOB EXAMPLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cpp")
   foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
     get_filename_component(EXAMPLE_NAME ${EXAMPLE_SOURCE} NAME_WE)
     add_executable(${EXAMPLE_NAME} ${EXAMPLE_SOURCE})
     target_link_libraries(${EXAMPLE_NAME} print)
-    install(TARGETS ${EXAMPLE_NAME}
-      RUNTIME DESTINATION bin
-    )
-  endforeach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
+    install(TARGETS ${EXAMPLE_NAME} RUNTIME DESTINATION bin)
+  endforeach()
 endif()
 
-install(TARGETS print
-    EXPORT print-config
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-)
-
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
-install(EXPORT print-config DESTINATION cmake)
-
+# 6. Тесты (если включены)
 if(BUILD_TESTS)
     enable_testing()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized")
     add_subdirectory(third-party/gtest)
-    file(GLOB ${PROJECT_NAME}_TEST_SOURCES tests/*.cpp)
-    add_executable(check ${${PROJECT_NAME}_TEST_SOURCES})
-    target_link_libraries(check ${PROJECT_NAME} gtest_main)
+    file(GLOB TEST_SOURCES tests/*.cpp)
+    add_executable(check ${TEST_SOURCES})
+    target_link_libraries(check print gtest_main)
     add_test(NAME check COMMAND check)
 endif()
-include(CPackConfig.cmake)
-# Указываем, что файл solver должен быть установлен в папку bin
-# Создаем исполняемый файл solver
-add_executable(solver ${CMAKE_CURRENT_SOURCE_DIR}/sources/solver.cpp)
 
-# Указываем, что его нужно установить в папку bin пакета
-install(TARGETS solver RUNTIME DESTINATION bin)
-
-# --- Настройки упаковки (CPack) ---
+# 7. НАСТРОЙКИ УПАКОВКИ (CPACK) - строго в конце файла
 set(CPACK_PACKAGE_NAME "solver")
+set(CPACK_PACKAGE_VENDOR "Brandon-Triks")
 set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_PACKAGE_CONTACT "your-email@example.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Brandon-Triks")
 
-# Для Windows (обязательно для WIX)
+# Чтобы пакет назывался solver-1.0.0-OS.extension
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
+
+# Лицензия для Windows (WiX)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_WIX_UPGRADE_GUID "E8A6820D-47C2-4309-8B77-8335D2E12345")
 
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt") # Добавь эту строку
+# Генерировать только бинарные пакеты (убираем Source из названия)
+set(CPACK_SOURCE_GENERATOR "") 
 
 include(CPack)
