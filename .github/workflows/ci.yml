@@ -1,0 +1,24 @@
+name: Hunter CMake CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure CMake with Hunter
+      run: cmake -H. -B_builds -DBUILD_TESTS=ON
+
+    - name: Build project
+      run: cmake --build _builds
+
+    - name: Run tests
+      run: cmake --build _builds --target test

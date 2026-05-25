@@ -1,0 +1,54 @@
+Execute command: [
+  `which`
+  `cmake`
+]
+[/home/igor/Brandon-Triks/workspace/projects/lab07]> "which" "cmake"
+/usr/bin/cmake
+Execute command: [
+  `cmake`
+  `--version`
+]
+[/home/igor/Brandon-Triks/workspace/projects/lab07]> "cmake" "--version"
+cmake version 3.31.6
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+Execute command: [
+  `cmake`
+  `-H.`
+  `-B/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14`
+  `-GUnix Makefiles`
+  `-DCMAKE_TOOLCHAIN_FILE=/home/igor/Brandon-Triks/workspace/projects/lab07/tools/polly/clang-cxx14.cmake`
+]
+[/home/igor/Brandon-Triks/workspace/projects/lab07]> "cmake" "-H." "-B/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14" "-GUnix Makefiles" "-DCMAKE_TOOLCHAIN_FILE=/home/igor/Brandon-Triks/workspace/projects/lab07/tools/polly/clang-cxx14.cmake"
+-- [polly] Used toolchain: clang / c++14 support
+-- The C compiler identification is Clang 19.1.7
+-- The CXX compiler identification is Clang 19.1.7
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14
+Execute command: [
+  `cmake`
+  `--build`
+  `/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14`
+  `--`
+]
+[/home/igor/Brandon-Triks/workspace/projects/lab07]> "cmake" "--build" "/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14" "--"
+[ 16%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
+[ 33%] Linking CXX static library libprint.a
+[ 33%] Built target print
+[ 50%] Building CXX object CMakeFiles/solver.dir/sources/solver.cpp.o
+[ 66%] Linking CXX executable solver
+[ 66%] Built target solver
+[ 83%] Building CXX object CMakeFiles/demo.dir/demo/main.cpp.o
+[100%] Linking CXX executable demo
+[100%] Built target demo
