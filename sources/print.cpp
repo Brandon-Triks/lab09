@@ -1,5 +1,6 @@
 #include <print.hpp>
 #include <fstream>
+#include <iostream>
 
 void print(const std::string& text, std::ostream& out)
 {
