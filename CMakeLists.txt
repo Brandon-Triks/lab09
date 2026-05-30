@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.10)
 
 # 1. Глобальные настройки компилятора
@@ -44,6 +45,7 @@ target_link_libraries(demo print)
 install(TARGETS solver demo RUNTIME DESTINATION bin)
 install(TARGETS print ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+
 # 9. Блок CPack
 set(CPACK_PACKAGE_NAME "solver")
 set(CPACK_PACKAGE_VENDOR "Brandon-Triks")
