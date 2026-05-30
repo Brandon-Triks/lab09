@@ -56,3 +56,20 @@ set(CPACK_WIX_UPGRADE_GUID "E8A6820D-47C2-4309-8B77-8335D2E12345")
 set(CPACK_PACKAGE_EXECUTABLES "solver" "Solver Application")
 
 include(CPack)
+
+# 10. Интеграция Doxygen в CMake
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
+  set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+  
+  # Настройка путей внутри сборочной директории CMake
+  configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+  
+  add_custom_target(doc
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM
+  )
+endif()

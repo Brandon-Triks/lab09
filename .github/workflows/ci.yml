@@ -1,4 +1,4 @@
-name: Hunter CMake CI
+name: CMake and Doxygen CI
 
 on:
   push:
@@ -14,6 +14,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y doxygen graphviz clang
+
     - name: Configure CMake with Hunter
       run: cmake -H. -B_builds -DBUILD_TESTS=ON
 
@@ -22,3 +27,13 @@ jobs:
 
     - name: Run tests
       run: cmake --build _builds --target test
+
+    - name: Generate Documentation
+      run: cmake --build _builds --target doc
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./doxygen_output/html
