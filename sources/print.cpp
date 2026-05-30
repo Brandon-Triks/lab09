@@ -1,4 +1,5 @@
 #include <print.hpp>
+#include <fstream>
 
 void print(const std::string& text, std::ostream& out)
 {
