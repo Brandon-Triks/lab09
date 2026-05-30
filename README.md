@@ -1,6 +1,6 @@
-# Лабораторная работа №7
+# Лабораторная работа №8
 ## Шаг 1
-Аналогично прошлым лабораторным работам, подготовим наше рабочее окружение, объявим переменные среды и скопируем репозиторий lab06 как основу для выполнения lab07.
+Аналогично прошлым лабораторным работам, подготовим наше рабочее окружение, объявим переменные среды и скопируем репозиторий lab07 как основу для выполнения lab08.
 
 ```
 # Установить переменные окружения
@@ -14,73 +14,336 @@ cd ${GITHUB_USERNAME}/workspace
 pushd .
 source scripts/activate
 
-# Клонировать lab06 как основу для lab07
-git clone https://github.com/${GITHUB_USERNAME}/lab06 projects/lab07
-cd projects/lab07
+# Клонировать lab07 как основу для lab08
+git clone https://github.com/${GITHUB_USERNAME}/lab07 projects/lab08
+cd projects/lab08
 
-# Изменить remote на новый репозиторий lab07
+# Изменить remote на новый репозиторий lab08
 git remote remove origin
-git remote add origin https://github.com/${GITHUB_USERNAME}/lab07
+git remote add origin https://github.com/${GITHUB_USERNAME}/lab08
 ```
 ## Шаг 2
-Интегрируем менеджер пакетов Hunter в наш проект. Скачаем архив Hunter вручную через системный wget и сохраним его локально в проект, чтобы полностью защититься от сетевых сбоев встроенного в CMake загрузчика.
+Установим в систему утилиту doxygen для генерации документации из комментариев в исходном коде, а также пакет graphviz для построения красивых диаграмм связей классов и функций.
 
 ```
-# Создать структуру папок для CMake модулей и архивов dependencies
-mkdir -p cmake
-
-# Скачать официальный файл HunterGate.cmake по рабочей ссылке
-wget -O cmake/HunterGate.cmake https://raw.githubusercontent.com/cpp-pm/gate/master/cmake/HunterGate.cmake
-
-# Скачать архив Hunter v0.24.8 локально в папку cmake
-wget -O cmake/hunter-v0.24.8.tar.gz https://github.com/cpp-pm/hunter/archive/v0.24.8.tar.gz
+# Обновить индексы пакетов и установить doxygen с зависимостями
+sudo apt-get update && sudo apt-get install -y doxygen graphviz
 ```
-Создадим демонстрационную утилиту в подпапке demo заранее, чтобы CMake не ругался на отсутствие исходных файлов при конфигурации проекта:
+Вывод:  
+```
+Пол:1 http://security.debian.org/debian-security trixie-security InRelease [43,4 kB]
+Пол:2 http://security.debian.org/debian-security trixie-security/main Sources [167 kB]
+Сущ:3 http://deb.debian.org/debian trixie InRelease                            
+Пол:4 http://deb.debian.org/debian trixie-updates InRelease [47,3 kB]          
+Пол:5 http://security.debian.org/debian-security trixie-security/main amd64 Packages [176 kB]
+Пол:6 http://security.debian.org/debian-security trixie-security/main Translation-en [111 kB]
+Игн:7 https://download.sublimetext.com apt/stable/ InRelease                   
+Игн:7 https://download.sublimetext.com apt/stable/ InRelease       
+Игн:7 https://download.sublimetext.com apt/stable/ InRelease       
+Ошб:7 https://download.sublimetext.com apt/stable/ InRelease       
+  SSL connection failed: error:00000000:lib(0)::reason(0) / Соединение разорвано другой стороной [IP: 159.203.66.81 443]
+Получено 545 kB за 1мин 50с (4 951 B/s)                            
+Чтение списков пакетов… Готово
+W: Не удалось получить https://download.sublimetext.com/apt/stable/InRelease  SSL connection failed: error:00000000:lib(0)::reason(0) / Соединение разорвано другой стороной [IP: 159.203.66.81 443]
+W: Некоторые индексные файлы скачать не удалось. Они были проигнорированы, или вместо них были использованы старые версии.
+Чтение списков пакетов… Готово
+Построение дерева зависимостей… Готово
+Чтение информации о состоянии… Готово         
+Будут установлены следующие дополнительные пакеты:
+  libann0 libcdt5 libcgraph6 libfmt10 libgts-0.7-5t64 libgts-bin libgvc6
+  libgvpr2 liblab-gamut1 libpathplan4 libxapian30
+Предлагаемые пакеты:
+  doxygen-latex doxygen-doc doxygen-gui gsfonts graphviz-doc xapian-tools
+Следующие НОВЫЕ пакеты будут установлены:
+  doxygen graphviz libann0 libcdt5 libcgraph6 libfmt10 libgts-0.7-5t64
+  libgts-bin libgvc6 libgvpr2 liblab-gamut1 libpathplan4 libxapian30
+Обновлено 0 пакетов, установлено 13 новых пакетов, для удаления отмечено 0 пакетов, и 217 пакетов не обновлено.
+Необходимо скачать 8 385 kB архивов.
+После данной операции объём занятого дискового пространства возрастёт на 33,4 MB.
+Пол:1 http://deb.debian.org/debian trixie/main amd64 libfmt10 amd64 10.1.1+ds1-4 [127 kB]
+Пол:2 http://deb.debian.org/debian trixie/main amd64 libxapian30 amd64 1.4.29-3 [1 165 kB]
+Пол:3 http://deb.debian.org/debian trixie/main amd64 doxygen amd64 1.9.8+ds-2.1 [5 017 kB]
+Пол:4 http://deb.debian.org/debian trixie/main amd64 libann0 amd64 1.1.2+doc-9+b1 [25,1 kB]
+Пол:5 http://deb.debian.org/debian trixie/main amd64 libcdt5 amd64 2.42.4-3 [40,3 kB]
+Пол:6 http://deb.debian.org/debian trixie/main amd64 libcgraph6 amd64 2.42.4-3 [64,0 kB]
+Пол:7 http://deb.debian.org/debian trixie/main amd64 libgts-0.7-5t64 amd64 0.7.6+darcs121130-5.2+b1 [160 kB]
+Пол:8 http://deb.debian.org/debian trixie/main amd64 libpathplan4 amd64 2.42.4-3 [42,6 kB]
+Пол:9 http://deb.debian.org/debian trixie/main amd64 libgvc6 amd64 2.42.4-3 [686 kB]
+Пол:10 http://deb.debian.org/debian trixie/main amd64 libgvpr2 amd64 2.42.4-3 [192 kB]
+Пол:11 http://deb.debian.org/debian trixie/main amd64 liblab-gamut1 amd64 2.42.4-3 [198 kB]
+Пол:12 http://deb.debian.org/debian trixie/main amd64 graphviz amd64 2.42.4-3 [621 kB]
+Пол:13 http://deb.debian.org/debian trixie/main amd64 libgts-bin amd64 0.7.6+darcs121130-5.2+b1 [47,7 kB]
+Получено 8 385 kB за 13с (628 kB/s)                                            
+Выбор ранее не выбранного пакета libfmt10:amd64.
+(Чтение базы данных … на данный момент установлено 169315 файлов и каталогов.)
+Подготовка к распаковке …/00-libfmt10_10.1.1+ds1-4_amd64.deb …
+Распаковывается libfmt10:amd64 (10.1.1+ds1-4) …
+Выбор ранее не выбранного пакета libxapian30:amd64.
+Подготовка к распаковке …/01-libxapian30_1.4.29-3_amd64.deb …
+Распаковывается libxapian30:amd64 (1.4.29-3) …
+Выбор ранее не выбранного пакета doxygen.
+Подготовка к распаковке …/02-doxygen_1.9.8+ds-2.1_amd64.deb …
+Распаковывается doxygen (1.9.8+ds-2.1) …
+Выбор ранее не выбранного пакета libann0.
+Подготовка к распаковке …/03-libann0_1.1.2+doc-9+b1_amd64.deb …
+Распаковывается libann0 (1.1.2+doc-9+b1) …
+Выбор ранее не выбранного пакета libcdt5:amd64.
+Подготовка к распаковке …/04-libcdt5_2.42.4-3_amd64.deb …
+Распаковывается libcdt5:amd64 (2.42.4-3) …
+Выбор ранее не выбранного пакета libcgraph6:amd64.
+Подготовка к распаковке …/05-libcgraph6_2.42.4-3_amd64.deb …
+Распаковывается libcgraph6:amd64 (2.42.4-3) …
+Выбор ранее не выбранного пакета libgts-0.7-5t64:amd64.
+Подготовка к распаковке …/06-libgts-0.7-5t64_0.7.6+darcs121130-5.2+b1_amd64.deb …
+Распаковывается libgts-0.7-5t64:amd64 (0.7.6+darcs121130-5.2+b1) …
+Выбор ранее не выбранного пакета libpathplan4:amd64.
+Подготовка к распаковке …/07-libpathplan4_2.42.4-3_amd64.deb …
+Распаковывается libpathplan4:amd64 (2.42.4-3) …
+Выбор ранее не выбранного пакета libgvc6.
+Подготовка к распаковке …/08-libgvc6_2.42.4-3_amd64.deb …
+Распаковывается libgvc6 (2.42.4-3) …
+Выбор ранее не выбранного пакета libgvpr2:amd64.
+Подготовка к распаковке …/09-libgvpr2_2.42.4-3_amd64.deb …
+Распаковывается libgvpr2:amd64 (2.42.4-3) …
+Выбор ранее не выбранного пакета liblab-gamut1:amd64.
+Подготовка к распаковке …/10-liblab-gamut1_2.42.4-3_amd64.deb …
+Распаковывается liblab-gamut1:amd64 (2.42.4-3) …
+Выбор ранее не выбранного пакета graphviz.
+Подготовка к распаковке …/11-graphviz_2.42.4-3_amd64.deb …
+Распаковывается graphviz (2.42.4-3) …
+Выбор ранее не выбранного пакета libgts-bin.
+Подготовка к распаковке …/12-libgts-bin_0.7.6+darcs121130-5.2+b1_amd64.deb …
+Распаковывается libgts-bin (0.7.6+darcs121130-5.2+b1) …
+Настраивается пакет libxapian30:amd64 (1.4.29-3) …
+Настраивается пакет liblab-gamut1:amd64 (2.42.4-3) …
+Настраивается пакет libpathplan4:amd64 (2.42.4-3) …
+Настраивается пакет libann0 (1.1.2+doc-9+b1) …
+Настраивается пакет libgts-0.7-5t64:amd64 (0.7.6+darcs121130-5.2+b1) …
+Настраивается пакет libcdt5:amd64 (2.42.4-3) …
+Настраивается пакет libcgraph6:amd64 (2.42.4-3) …
+Настраивается пакет libfmt10:amd64 (10.1.1+ds1-4) …
+Настраивается пакет libgts-bin (0.7.6+darcs121130-5.2+b1) …
+Настраивается пакет doxygen (1.9.8+ds-2.1) …
+Настраивается пакет libgvc6 (2.42.4-3) …
+Настраивается пакет libgvpr2:amd64 (2.42.4-3) …
+Настраивается пакет graphviz (2.42.4-3) …
+Обрабатываются триггеры для man-db (2.13.1-1) …
+Обрабатываются триггеры для libc-bin (2.41-12+deb13u3) …
+```
+## Шаг 3
+Сгенерируем базовый файл конфигурации Doxygen (Doxyfile) по умолчанию и отредактируем его ключевые параметры с помощью потокового редактора gsed (sed), чтобы настроить пути к исходникам и включить генерацию диаграмм.
 
 ```
-# Создать директорию demo
-mkdir -p demo
+# Создать стандартный конфигурационный файл Doxyfile
+doxygen -g
+```
+Вывод:
+```
+Configuration file 'Doxyfile' created.
 
-# Создать файл main.cpp для утилиты demo
-cat > demo/main.cpp <<EOF
-#include <print.hpp>
-#include <cstdlib>
+Now edit the configuration file and enter
+
+  doxygen
+
+to generate the documentation for your project
+```
+```
+# Сконфигурировать основные параметры внутри Doxyfile
+gsed -i 's/PROJECT_NAME           = "My Project"/PROJECT_NAME           = "solver"/' Doxyfile
+gsed -i 's/OUTPUT_DIRECTORY       =/OUTPUT_DIRECTORY       = doxygen_output/' Doxyfile
+gsed -i 's/INPUT                  =/INPUT                  = include\/ sources\/ demo\//' Doxyfile
+gsed -i 's/RECURSIVE              = NO/RECUR
+SIVE              = YES/' Doxyfile
+gsed -i 's/EXTRACT_ALL            = NO/EXTRACT_ALL            = YES/' Doxyfile
+gsed -i 's/HAVE_DOT               = NO/HAVE_DOT               = YES/' Doxyfile
+gsed -i 's/GENERATE_LATEX         = YES/GENERATE_LATEX         = NO/' Doxyfile
+```
+## Шаг 4
+Добавим документирующие комментарии в формате Doxygen в заголовочный файл нашей библиотеки, чтобы описать назначение функций и их аргументы.
+
+```
+# Добавить комментарии в файл include/print.hpp
+cat > include/print.hpp <<EOF
+/**
+ * @file print.hpp
+ * @brief Заголовочный файл с функциями вывода текста
+ */
+
+#pragma once
+
+#include <string>
 #include <iostream>
-#include <fstream>
 
-int main(int argc, char* argv[])
-{
-  const char* log_path = std::getenv("LOG_PATH");
-  if (log_path == nullptr)
-  {
-    std::cerr << "undefined environment variable: LOG_PATH" << std::endl;
-    return 1;
-  }
-
-  std::string text;
-  while (std::cin >> text)
-  {
-    std::ofstream out{log_path, std::ios_base::app};
-    print(text, out);
-    out << std::endl;
-  }
-}
+/**
+ * @brief Функция для записи текста в любой стандартный выходной поток
+ * @param text Строка текста для вывода
+ * @param out Ссылка на поток вывода (по умолчанию std::cout)
+ */
+void print(const std::string& text, std::ostream& out = std::cout);
 EOF
+Проверим локальную генерацию документации, запустив doxygen.
 ```
-Полностью перезапишем CMakeLists.txt. Для обратной совместимости с Hunter v0.24.x мы используем имя таргета линковки GTest::gtest_main:
+
+```
+# Сборка локальной документации
+doxygen Doxyfile
+```
+Вывод:
+```
+Doxygen version used: 1.9.8
+Notice: Output directory 'doxygen_output' does not exist. I have created it for you.
+Searching for include files...
+Searching for example files...
+Searching for images...
+Searching for dot files...
+Searching for msc files...
+Searching for dia files...
+Searching for files to exclude
+Searching INPUT for files to process...
+Searching for files in directory /home/igor/Brandon-Triks/workspace/projects/lab08/include
+Searching for files in directory /home/igor/Brandon-Triks/workspace/projects/lab08/sources
+Searching for files in directory /home/igor/Brandon-Triks/workspace/projects/lab08/demo
+Reading and parsing tag files
+Parsing files
+Preprocessing /home/igor/Brandon-Triks/workspace/projects/lab08/include/print.hpp...
+Parsing file /home/igor/Brandon-Triks/workspace/projects/lab08/include/print.hpp...
+Preprocessing /home/igor/Brandon-Triks/workspace/projects/lab08/sources/print.cpp...
+Parsing file /home/igor/Brandon-Triks/workspace/projects/lab08/sources/print.cpp...
+Preprocessing /home/igor/Brandon-Triks/workspace/projects/lab08/sources/solver.cpp...
+Parsing file /home/igor/Brandon-Triks/workspace/projects/lab08/sources/solver.cpp...
+Preprocessing /home/igor/Brandon-Triks/workspace/projects/lab08/demo/main.cpp...
+Parsing file /home/igor/Brandon-Triks/workspace/projects/lab08/demo/main.cpp...
+Building macro definition list...
+Building group list...
+Building directory list...
+Building namespace list...
+Building file list...
+Building class list...
+Building concept list...
+Computing nesting relations for classes...
+Associating documentation with classes...
+Associating documentation with concepts...
+Associating documentation with modules...
+Building example list...
+Searching for enumerations...
+Searching for documented typedefs...
+Searching for members imported via using declarations...
+Searching for included using directives...
+Searching for documented variables...
+Building interface member list...
+Building member list...
+Searching for friends...
+Searching for documented defines...
+Computing class inheritance relations...
+Computing class usage relations...
+Flushing cached template relations that have become invalid...
+Computing class relations...
+Add enum values to enums...
+Searching for member function documentation...
+Creating members for template instances...
+Building page list...
+Search for main page...
+Computing page relations...
+Determining the scope of groups...
+Computing module relations...
+Sorting lists...
+Determining which enums are documented
+Computing member relations...
+Building full member lists recursively...
+Adding members to member groups.
+Computing member references...
+Inheriting documentation...
+Generating disk names...
+Adding source references...
+Adding xrefitems...
+Sorting member lists...
+Setting anonymous enum type...
+Computing dependencies between directories...
+Generating citations page...
+Counting members...
+Counting data structures...
+Resolving user defined references...
+Finding anchors and sections in the documentation...
+Transferring function references...
+Combining using relations...
+Adding members to index pages...
+Correcting members for VHDL...
+Computing tooltip texts...
+Generating style sheet...
+Generating search indices...
+Generating example documentation...
+Generating file sources...
+Generating code for file include/print.hpp...
+Generating file documentation...
+Generating docs for file demo/main.cpp...
+Generating docs for file include/print.hpp...
+Generating docs for file sources/print.cpp...
+Generating docs for file sources/solver.cpp...
+Generating page documentation...
+Generating group documentation...
+Generating class documentation...
+Generating concept documentation...
+Generating module documentation...
+Generating namespace documentation...
+Generating graph info page...
+Generating directory documentation...
+Generating dependency graph for directory demo
+Generating dependency graph for directory sources
+Generating index page...
+Generating page index...
+Generating topic index...
+Generating module index...
+Generating module member index...
+Generating namespace index...
+Generating namespace member index...
+Generating concept index...
+Generating annotated compound index...
+Generating alphabetical compound index...
+Generating hierarchical class index...
+Generating graphical class hierarchy...
+Generating member index...
+Generating file index...
+Generating file member index...
+Generating example index...
+finalizing index lists...
+writing tag file...
+Running plantuml with JAVA...
+Running dot...
+Generating dot graphs using 3 parallel threads...
+Running dot for graph 1/8
+Running dot for graph 2/8
+Running dot for graph 3/8
+Running dot for graph 4/8
+Running dot for graph 5/8
+Running dot for graph 6/8
+Running dot for graph 7/8
+Running dot for graph 8/8
+Patching output file 1/6
+Patching output file 2/6
+Patching output file 3/6
+Patching output file 4/6
+Patching output file 5/6
+Patching output file 6/6
+type lookup cache used 2/65536 hits=3 misses=2
+symbol lookup cache used 3/65536 hits=3 misses=3
+finished...
+```
+## Шаг 5  
+Шаг 5
+Полностью перезапишем файл CMakeLists.txt чистой и корректной структурой, включая интеграцию Doxygen через пользовательскую цель doc, чтобы избежать ошибок дублирования или некорректной вложенности if / endif.
 
 ```
 cat > CMakeLists.txt <<EOF
 cmake_minimum_required(VERSION 3.10)
 
-# 1. Глобальные настройки компилятора (C++11 обязателен для GTest)
+# 1. Глобальные настройки компилятора
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 2. Подключение менеджера пакетов Hunter через локальный архив с корректным хэшем
+# 2. Подключение менеджера пакетов Hunter
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL "file://\${CMAKE_CURRENT_SOURCE_DIR}/cmake/hunter-v0.24.8.tar.gz"
+    URL "file://${CMAKE_CURRENT_SOURCE_DIR}/cmake/hunter-v0.24.8.tar.gz"
     SHA1 "ca7838dded9a1811b04ffd56175f629e0af82d3d"
 )
 
@@ -88,17 +351,17 @@ HunterGate(
 project(solver VERSION 1.0.0)
 
 # 4. Описание библиотеки print
-add_library(print STATIC \${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
+add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
 target_include_directories(print PUBLIC
-  $<BUILD_INTERFACE:\${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
 # 5. Описание приложения solver
-add_executable(solver \${CMAKE_CURRENT_SOURCE_DIR}/sources/solver.cpp)
+add_executable(solver ${CMAKE_CURRENT_SOURCE_DIR}/sources/solver.cpp)
 target_link_libraries(solver print)
 
-# 6. Подключение тестов через Hunter GTest (Используем корректный импортированный таргет)
+# 6. Подключение тестов через Hunter GTest
 option(BUILD_TESTS "Build tests" OFF)
 if(BUILD_TESTS)
   hunter_add_package(GTest)
@@ -110,13 +373,13 @@ if(BUILD_TESTS)
 endif()
 
 # 7. Демонстрационная утилита
-add_executable(demo \${CMAKE_CURRENT_SOURCE_DIR}/demo/main.cpp)
+add_executable(demo ${CMAKE_CURRENT_SOURCE_DIR}/demo/main.cpp)
 target_link_libraries(demo print)
 
 # 8. Правила установки
 install(TARGETS solver demo RUNTIME DESTINATION bin)
 install(TARGETS print ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
-install(DIRECTORY \${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
 
 # 9. Блок CPack
 set(CPACK_PACKAGE_NAME "solver")
@@ -124,28 +387,42 @@ set(CPACK_PACKAGE_VENDOR "Brandon-Triks")
 set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_PACKAGE_CONTACT "your-email@example.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Brandon-Triks")
-set(CPACK_RESOURCE_FILE_LICENSE "\${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_WIX_UPGRADE_GUID "E8A6820D-47C2-4309-8B77-8335D2E12345")
 set(CPACK_PACKAGE_EXECUTABLES "solver" "Solver Application")
 
 include(CPack)
+
+# 10. Интеграция Doxygen в CMake
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
+  set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+  
+  configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+  
+  add_custom_target(doc
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM
+  )
+endif()
 EOF
 ```
-## Шаг 3
-Проверим сборку проекта. Удалим старый закэшированный ошибочный воркспейс и запустим конфигурацию заново.
+Удалим старый сломанный кэш CMake и заново выполним сборку и генерацию документации.
 
 ```
-# Сбросить старую директорию сборки и очистить локальный кэш Hunter
+# Полностью удалить старую директорию сборки, чтобы сбросить сломанный кэш
 rm -rf _builds
-rm -rf $HOME/.hunter
 
-# Сконфигурировать проект с включенными тестами
+# Переконфигурировать проект с чистого листа
 cmake -H. -B_builds -DBUILD_TESTS=ON
 ```
-
-Вывод:
+Вывод:  
 ```
-- The C compiler identification is GNU 14.2.0
+...  
+-- The C compiler identification is GNU 14.2.0
 -- The CXX compiler identification is GNU 14.2.0
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
@@ -158,245 +435,29 @@ cmake -H. -B_builds -DBUILD_TESTS=ON
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
 -- [hunter] Calculating Toolchain-SHA1
--- [hunter] Calculating Config-SHA1
--- [hunter] HUNTER_ROOT: /home/igor/projects/hunter
--- [hunter] [ Hunter-ID: xxxxxxx | Toolchain-ID: d1e9b55 | Config-ID: dde7d8a ]
--- [hunter] GTEST_ROOT: /home/igor/projects/hunter/_Base/xxxxxxx/d1e9b55/dde7d8a/Install (ver.: 1.15.2)
--- [hunter] Building GTest
-loading initial cache file /home/igor/projects/hunter/_Base/xxxxxxx/d1e9b55/dde7d8a/cache.cmake
-loading initial cache file /home/igor/projects/hunter/_Base/xxxxxxx/d1e9b55/dde7d8a/Build/GTest/args.cmake
--- The C compiler identification is GNU 14.2.0
--- The CXX compiler identification is GNU 14.2.0
--- Check for working C compiler: /usr/bin/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Configuring done (0.2s)
--- Generating done (0.0s)
--- Build files have been written to: /home/igor/projects/hunter/_Base/xxxxxxx/d1e9b55/dde7d8a/Build/GTest/Build
-...
--- The C compiler identification is GNU 14.2.0
--- The CXX compiler identification is GNU 14.2.0
--- Check for working C compiler: /usr/bin/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
+CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+...  
+-- [hunter] GTEST_ROOT: /home/igor/.hunter/_Base/ca7838d/d1e9b55/0b339ba/Install (ver.: 1.12.1)
 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
 -- Found Threads: TRUE
--- Configuring done (0.3s)
+-- Found Doxygen: /usr/bin/doxygen (found version "1.9.8") found components: doxygen dot
+-- Configuring done (1.4s)
 -- Generating done (0.0s)
--- Build files have been written to: /home/igor/projects/hunter/_Base/xxxxxxx/d1e9b55/dde7d8a/Build/GTest/Build/GTest-Release-prefix/src/GTest-Release-build
-...
--- The C compiler identification is GNU 14.2.0
--- The CXX compiler identification is GNU 14.2.0
--- Check for working C compiler: /usr/bin/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
--- Found Threads: TRUE
--- Configuring done (0.3s)
--- Generating done (0.0s)
--- Build files have been written to: /home/igor/projects/hunter/_Base/xxxxxxx/d1e9b55/dde7d8a
-...
-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
--- Found Threads: TRUE
--- Configuring done (24.2s)
--- Generating done (0.0s)
--- Build files have been written to: /home/igor/Brandon-Triks/workspace/projects/lab07/_builds
-...
-```
-```
-# Скомпилировать проект вместе с тестами
-cmake --build _builds
-```
-Вывод:
-```
-[ 12%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
-[ 25%] Linking CXX static library libprint.a
-[ 25%] Built target print
-[ 37%] Building CXX object CMakeFiles/solver.dir/sources/solver.cpp.o
-[ 50%] Linking CXX executable solver
-[ 50%] Built target solver
-[ 62%] Building CXX object CMakeFiles/test_solver.dir/sources/solver.cpp.o
-[ 75%] Linking CXX executable test_solver
-[ 75%] Built target test_solver
-[ 87%] Building CXX object CMakeFiles/demo.dir/demo/main.cpp.o
-[100%] Linking CXX executable demo
-[100%] Built target demo
-
-```
-```
-# Запустить прогон тестов
-cmake --build _builds --target test
-```
-Вывод:
-```
-Running tests...
-Test project /home/igor/Brandon-Triks/workspace/projects/lab07/_builds
-    Start 1: solver_test
-1/1 Test #1: solver_test ......................   Passed    0.00 sec
-
-100% tests passed, 0 tests failed out of 1
-
-Total Test time (real) =   0.00 sec
-
-```
-## Шаг 4
-Проверим переопределение корня Hunter через локальный репозиторий и работу локального файла конфигурации config.cmake.
-
-```
-# Клонировать локально репозиторий менеджера пакетов hunter
-git clone https://github.com/cpp-pm/hunter $HOME/projects/hunter
-
-# Установить переменную среды HUNTER_ROOT на наш локальный репозиторий
-export HUNTER_ROOT=$HOME/projects/hunter
-
-# Очистить прошлую сборку
-rm -rf _builds
-
-# Снова запустить конфигурацию, используя локальный репозиторий Hunter
-cmake -H. -B_builds -DBUILD_TESTS=ON
-```
-
-
-Создадим файл локальных настроек проекта cmake/Hunter/config.cmake, чтобы зафиксировать нужную нам версию пакета:
-
-```
-# Создать директорию для собственных конфигураций внутри проекта
-mkdir -p cmake/Hunter
-
-# Записать кастомную версию для GTest
-cat > cmake/Hunter/config.cmake <<EOF
-hunter_config(GTest VERSION 1.10.0-hunter-p0)
-EOF
-```
-
-
-## Шаг 5
-Утилита demo уже успешно создана на Шаге 2 и сконфигурирована в CMakeLists.txt. Проверим структуру каталогов проекта, чтобы убедиться, что всё находится на своих местах.
-
-```
-# Посмотреть структуру проекта
-ls -la demo/
-```
-Вывод:
-```
-итого 12
-drwxrwxr-x  2 igor igor 4096 мая 25 21:44 .
-drwxrwxr-x 13 igor igor 4096 мая 25 21:56 ..
--rw-rw-r--  1 igor igor  443 мая 25 21:44 main.cpp
-```
+-- Build files have been written to: /home/igor/Brandon-Triks/workspace/projects/lab08/_builds
+```  
 ## Шаг 6
-Подключим репозиторий polly, содержащий шаблоны тулчейнов для CMake. Установим недостающий в системе компилятор clang, чтобы протестировать кросс-компиляцию сборки под стандарт clang-cxx14.
-
-```
-# Добавить polly как подмодуль гит
-mkdir -p tools
-git submodule add https://github.com/ruslo/polly tools/polly
-
-# Установить компилятор clang в систему, чтобы polly смог его обнаружить
-sudo apt-get update && sudo apt-get install -y clang
-
-# Проверить сборку проекта с использованием тулчейна через polly
-tools/polly/bin/polly.py --toolchain clang-cxx14
-```
-Вывод:
-```
-Python version: 3.13
-Build dir: /home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14
-Execute command: [
-  `which`
-  `cmake`
-]
-
-[/home/igor/Brandon-Triks/workspace/projects/lab07]> "which" "cmake"
-
-/usr/bin/cmake
-Execute command: [
-  `cmake`
-  `--version`
-]
-
-[/home/igor/Brandon-Triks/workspace/projects/lab07]> "cmake" "--version"
-
-cmake version 3.31.6
-
-CMake suite maintained and supported by Kitware (kitware.com/cmake).
-Execute command: [
-  `cmake`
-  `-H.`
-  `-B/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14`
-  `-GUnix Makefiles`
-  `-DCMAKE_TOOLCHAIN_FILE=/home/igor/Brandon-Triks/workspace/projects/lab07/tools/polly/clang-cxx14.cmake`
-]
-
-[/home/igor/Brandon-Triks/workspace/projects/lab07]> "cmake" "-H." "-B/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14" "-GUnix Makefiles" "-DCMAKE_TOOLCHAIN_FILE=/home/igor/Brandon-Triks/workspace/projects/lab07/tools/polly/clang-cxx14.cmake"
-
--- [polly] Used toolchain: clang / c++14 support
--- The C compiler identification is Clang 19.1.7
--- The CXX compiler identification is Clang 19.1.7
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/clang - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/clang++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Configuring done (0.7s)
--- Generating done (0.0s)
--- Build files have been written to: /home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14
-Execute command: [
-  `cmake`
-  `--build`
-  `/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14`
-  `--`
-]
-
-[/home/igor/Brandon-Triks/workspace/projects/lab07]> "cmake" "--build" "/home/igor/Brandon-Triks/workspace/projects/lab07/_builds/clang-cxx14" "--"
-
-[ 16%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
-[ 33%] Linking CXX static library libprint.a
-[ 33%] Built target print
-[ 50%] Building CXX object CMakeFiles/solver.dir/sources/solver.cpp.o
-[ 66%] Linking CXX executable solver
-[ 66%] Built target solver
-[ 83%] Building CXX object CMakeFiles/demo.dir/demo/main.cpp.o
-[100%] Linking CXX executable demo
-[100%] Built target demo
--
-Log saved: /home/igor/Brandon-Triks/workspace/projects/lab07/_logs/polly/clang-cxx14/log.txt
--
-Generate: 0:00:01.722649s
-Build: 0:00:02.099593s
--
-Total: 0:00:03.824549s
--
-SUCCESS
-```
-
-## Шаг 7
-Настроим автоматический воркфлоу тестирования через непрерывную интеграцию GitHub Actions вместо Travis CI. Создадим файл .github/workflows/ci.yml. Шаг с созданием файла REPORT.md пропускаем.
+Обновим автоматический воркфлоу непрерывной интеграции GitHub Actions в файле .github/workflows/ci.yml. Настроим его так, чтобы при каждом пуше в ветку main он компилировал проект, прогонял тесты, собирал документацию Doxygen и автоматически публиковал её на GitHub Pages (в ветку gh-pages).
 
 ```
 # Создать папку для воркфлоу
 mkdir -p .github/workflows
 
-# Создать конфигурацию GitHub Actions
+# Перезаписать файл конфигурации GitHub Actions
 cat > .github/workflows/ci.yml <<EOF
-name: Hunter CMake CI
+name: CMake and Doxygen CI
 
 on:
   push:
@@ -412,6 +473,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y doxygen graphviz clang
+
     - name: Configure CMake with Hunter
       run: cmake -H. -B_builds -DBUILD_TESTS=ON
 
@@ -420,29 +486,31 @@ jobs:
 
     - name: Run tests
       run: cmake --build _builds --target test
+
+    - name: Generate Documentation
+      run: cmake --build _builds --target doc
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: \${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./doxygen_output/html
 EOF
-```
-Отправим все изменения в наш удаленный репозиторий на GitHub:
+```  
+# Шаг 7
+Исключим сгенерированные локально папки с документацией и сборкой из индексации Git с помощью добавления правил в .gitignore, после чего закоммитим все файлы и отправим их в удаленный репозиторий lab08.
 
 ```
-# Закоммитить и запушить изменения
+# Добавить выходную директорию doxygen и папки сборки в .gitignore
+echo "doxygen_output/" >> .gitignore
+echo "_builds/" >> .gitignore
+echo "_logs/" >> .gitignore
+
+# Добавить файлы в индекс, сделать коммит и отправить на GitHub
 git add .
-git commit -m "fixed cmake layout, installed clang compiler toolset dependency for polly integrations"
+git commit -m "docs: clean rebuild, integrated doxygen target into cmake layout and added actions pages deploy"
 git push origin main
-```
-Вывод:
-```
-Username for 'https://github.com': Brandon-Triks
-Password for 'https://Brandon-Triks@github.com': 
-Перечисление объектов: 212, готово.
-Подсчет объектов: 100% (212/212), готово.
-При сжатии изменений используется до 2 потоков
-Сжатие объектов: 100% (118/118), готово.
-Запись объектов: 100% (212/212), 2.69 МиБ | 3.64 МиБ/с, готово.
-Total 212 (delta 64), reused 191 (delta 61), pack-reused 0 (from 0)
-remote: Resolving deltas: 100% (64/64), done.
-To https://github.com/Brandon-Triks/lab07
- * [new branch]      main -> main
 ```
 
 # Вывод:
