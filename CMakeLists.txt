@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
-# 1. Глобальные настройки компилятора (C++11 обязателен для GTest)
+# 1. Глобальные настройки компилятора
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 2. Подключение менеджера пакетов Hunter через локальный архив с корректным хэшем
+# 2. Подключение менеджера пакетов Hunter
 include(cmake/HunterGate.cmake)
 HunterGate(
     URL "file://${CMAKE_CURRENT_SOURCE_DIR}/cmake/hunter-v0.24.8.tar.gz"
@@ -25,7 +25,7 @@ target_include_directories(print PUBLIC
 add_executable(solver ${CMAKE_CURRENT_SOURCE_DIR}/sources/solver.cpp)
 target_link_libraries(solver print)
 
-# 6. Подключение тестов через Hunter GTest (Используем корректный импортированный таргет)
+# 6. Подключение тестов через Hunter GTest
 option(BUILD_TESTS "Build tests" OFF)
 if(BUILD_TESTS)
   hunter_add_package(GTest)
@@ -44,7 +44,6 @@ target_link_libraries(demo print)
 install(TARGETS solver demo RUNTIME DESTINATION bin)
 install(TARGETS print ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
-
 # 9. Блок CPack
 set(CPACK_PACKAGE_NAME "solver")
 set(CPACK_PACKAGE_VENDOR "Brandon-Triks")
@@ -63,7 +62,6 @@ if(DOXYGEN_FOUND)
   set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
   set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
   
-  # Настройка путей внутри сборочной директории CMake
   configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
   
   add_custom_target(doc

@@ -2,6 +2,3 @@
 *install*/
 *.swp
 .idea/
-doxygen_output/
-_builds/
-_logs/
