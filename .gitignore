@@ -1,4 +1,5 @@
-*build*/
-*install*/
-*.swp
-.idea/
+_builds/
+_builds_artifacts/
+_logs/
+doxygen_output/
+.hunter/
